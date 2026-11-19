@@ -1,6 +1,14 @@
 [
   {
     "name": "PlunderPort",
+    "reward": "$10.000",
+    "cost": "Gratis",
+    "steps": "Connect EVM, X, Follow X",
+    "link": "https://plunderport.fun/?ref=RCQ01BTAKQ",
+    "date": "2026-11-19"
+  },
+  {
+    "name": "PlunderPort",
     "category": "Awaitlist",
     "reward": "$10.000",
     "cost": "Gratis",
