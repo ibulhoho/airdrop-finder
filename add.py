@@ -1,4 +1,3 @@
-import os; os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import html
 import json
 import os
@@ -6,6 +5,8 @@ import subprocess
 import urllib.parse
 import urllib.request
 from datetime import date
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 DATA_FILE = "airdrops.json"
 SECRET_FILE = "secret.json"
@@ -32,7 +33,6 @@ def get_telegram_config():
 def send_telegram(token, chat_id, item):
     text = (
         f"🔥 <b>AIRDROP BARU: {html.escape(item['name'])}</b>\n\n"
-        f"📂 <b>Kategori:</b> {html.escape(item['category'])}\n"
         f"🎁 <b>Reward:</b> {html.escape(item['reward'])}\n"
         f"💰 <b>Modal:</b> {html.escape(item['cost'])}\n\n"
         f"📝 <b>Cara Garap:</b>\n{html.escape(item['steps'])}\n\n"
@@ -62,7 +62,6 @@ def main():
     if not name:
         print("Nama proyek wajib diisi.")
         return
-    category = input("Kategori (Testnet/SocialFi/Telegram/DeFi): ").strip() or "Testnet"
     reward = input("Estimasi Reward: ").strip() or "Potential Airdrop"
     cost = input("Modal (Gratis/Gas Fee): ").strip() or "Gratis"
     steps = input("Cara Garap Singkat: ").strip()
@@ -70,7 +69,6 @@ def main():
 
     item = {
         "name": name,
-        "category": category,
         "reward": reward,
         "cost": cost,
         "steps": steps,

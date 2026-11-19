@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Airdrop Finder</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #131a26;
+      --border: #1f2937;
+      --accent: #22c55e;
+      --accent-hover: #16a34a;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 16px; max-width: 900px; margin: auto; }
+    header { text-align: center; padding: 20px 0 24px; }
+    header h1 { font-size: 1.6rem; letter-spacing: -0.5px; }
+    header p { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+    .controls { margin-bottom: 20px; }
+    input[type="text"] {
+      width: 100%; padding: 12px 14px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+      font-size: 0.95rem; outline: none;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+    }
+    .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .reward {
+      font-size: 0.78rem; padding: 3px 9px; border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600;
+    }
+    .cost { font-size: 0.78rem; color: var(--muted); }
+    .card h2 { font-size: 1.15rem; margin-top: 8px; }
+    .steps { font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+    .date { font-size: 0.75rem; color: #6b7280; }
+    .btn {
+      background: var(--accent); color: #052e16; text-decoration: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .empty { text-align: center; color: var(--muted); padding: 40px 0; grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Airdrop Finder</h1>
+    <p>Daftar garapan Web3 terkurasi</p>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Cari nama proyek atau tugas..." />
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    let allData = [];
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str || "";
+      return div.innerHTML;
+    }
+
+    function render() {
+      const q = document.getElementById("searchInput").value.toLowerCase();
+      const grid = document.getElementById("grid");
+      const filtered = allData.filter(item =>
+        (item.name || "").toLowerCase().includes(q) ||
+        (item.steps || "").toLowerCase().includes(q)
+      );
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="empty">Belum ada airdrop yang cocok.</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => `
+        <div class="card">
+          <div>
+            <div class="card-top">
+              <span class="reward">${escapeHtml(item.reward)}</span>
+              <span class="cost">${escapeHtml(item.cost)}</span>
+            </div>
+            <h2>${escapeHtml(item.name)}</h2>
+          </div>
+          <p class="steps">${escapeHtml(item.steps)}</p>
+          <div class="card-footer">
+            <span class="date">${escapeHtml(item.date)}</span>
+            <a class="btn" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">Garap ↗</a>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("searchInput").addEventListener("input", render);
+
+    fetch("airdrops.json?v=" + Date.now())
+      .then(res => res.json())
+      .then(data => { allData = data; render(); })
+      .catch(() => {
+        document.getElementById("grid").innerHTML = '<div class="empty">Gagal memuat data.</div>';
+      });
+  </script>
+</body>
+</html>
